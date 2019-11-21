@@ -11,6 +11,11 @@ class AppBarLabPage extends LabPage {
 class _AppBarLabPageState extends State<AppBarLabPage> {
   TextEditingController titleController;
   bool centerTitle = false;
+  String leading = 'null';
+  Map<String, dynamic> leadingWidget = {
+    'null': null,
+    'Icon(Icons.apps)': Icon(Icons.apps),
+  };
 
   @override
   void initState() {
@@ -24,6 +29,7 @@ class _AppBarLabPageState extends State<AppBarLabPage> {
       appBar: AppBar(
         title: Text(titleController.value.text),
         centerTitle: centerTitle,
+        leading: leadingWidget[leading],
       ),
       body: DefaultTextStyle(
         style: Theme.of(context).textTheme.body1,
@@ -37,43 +43,9 @@ class _AppBarLabPageState extends State<AppBarLabPage> {
                 padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text('title:Text(\' '),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              controller: titleController,
-                              onEditingComplete: () {
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        ),
-                        Text(' \'),')
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text('centerTitle: '),
-                        InkWell(
-                          child: Text(
-                            centerTitle.toString(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .body2
-                                .copyWith(color: Colors.red),
-                          ),
-                          onTap: () {
-                            setState(() {
-                              centerTitle = !centerTitle;
-                            });
-                          },
-                        ),
-                        Text(',')
-                      ],
-                    ),
+                    buildTitle(),
+                    buildCenterTitle(context),
+                    buildLeading(),
                   ],
                 ),
               ),
@@ -82,6 +54,77 @@ class _AppBarLabPageState extends State<AppBarLabPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Row buildLeading() {
+    return Row(
+      children: <Widget>[
+        Text('leading:'),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: DropdownButton(
+            value: leading,
+            items: ['null', 'Icon(Icons.apps)'].map((value) {
+              return DropdownMenuItem(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (newVal) {
+              setState(() {
+                leading = newVal;
+              });
+            },
+            elevation: 1,
+          ),
+        ),
+        Text(','),
+      ],
+    );
+  }
+
+  Row buildTitle() {
+    return Row(
+      children: <Widget>[
+        Text('title:Text(\''),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: TextFormField(
+              controller: titleController,
+              onEditingComplete: () {
+                setState(() {});
+              },
+            ),
+          ),
+        ),
+        Text('\'),')
+      ],
+    );
+  }
+
+  Row buildCenterTitle(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Text('centerTitle: '),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: InkWell(
+            child: Text(
+              centerTitle.toString(),
+              style:
+                  Theme.of(context).textTheme.body2.copyWith(color: Colors.red),
+            ),
+            onTap: () {
+              setState(() {
+                centerTitle = !centerTitle;
+              });
+            },
+          ),
+        ),
+        Text(',')
+      ],
     );
   }
 }
